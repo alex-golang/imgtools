@@ -56,10 +56,11 @@ func getStreams(file string, pipe bool) (in io.ReadCloser, out io.Writer) {
 
 // parseArgs parses command line arguments.
 func parseArgs() (string, bool, string, string) {
-	target := flag.String("type", "",
-		fmt.Sprintf("Name of target image type: %s", strings.Join(lib.Formats(), ", ")))
-	optstr := flag.String("options", "", "List of encoder options.")
-	version := flag.Bool("version", false, "Display version information.")
+	target := flag.String("type", "", "")
+	optstr := flag.String("options", "", "")
+	version := flag.Bool("version", false, "")
+
+	flag.Usage = usage
 	flag.Parse()
 
 	if *version {
@@ -77,4 +78,44 @@ func parseArgs() (string, bool, string, string) {
 	}
 
 	return filepath.Clean(flag.Args()[0]), false, *target, *optstr
+}
+
+func usage() {
+	fmt.Printf(`Usage: %s [options] <path>
+   or: cat <path> | %s [options]
+
+ -version
+    Displays version information.
+
+ -type <name>
+    Name of target image format: %s
+
+ -options <string>
+    A semi-colon-separated list of key/value pairs.
+    These pairs specify encoder properties specific to the
+    output image type. For example:
+    
+        -options "key1: value1; key2: value2; ...; keyN: valueN"
+    
+    Known option key names for a given encoder:
+
+`, AppName, AppName, strings.Join(lib.Formats(), ", "))
+
+	for _, enc := range lib.Encoders {
+		keys := enc.Keys()
+
+		if len(keys) == 0 {
+			continue
+		}
+
+		fmt.Printf("        %s: %s\n", enc.Name, strings.Join(keys, ", "))
+	}
+
+	fmt.Printf(`
+    For example:
+      
+        %s -type jpeg -options "quality:75" file.png
+        %s -type pnm -options "format:P6" file.png
+
+`, AppName, AppName)
 }
