@@ -7,20 +7,58 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jteeuwen/imgtools/lib"
+	_ "github.com/jteeuwen/imgtools/lib/gif"
+	_ "github.com/jteeuwen/imgtools/lib/jpeg"
+	_ "github.com/jteeuwen/imgtools/lib/png"
+	_ "github.com/jteeuwen/imgtools/lib/pnm"
+	"image"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
 func main() {
-	file, target, pipe := parseArgs()
-	println(file, target, pipe)
+	file, pipe, format, options := parseArgs()
+	in, out := getStreams(file, pipe)
+
+	if !pipe {
+		defer in.Close()
+	}
+
+	img, _, err := image.Decode(in)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Invalid input file: %v\n", err)
+		return
+	}
+
+	err = lib.Encode(out, format, img, options)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Encode failed: %v\n", err)
+		return
+	}
+}
+
+// getStreams opens ands returns the input and output streams.
+func getStreams(file string, pipe bool) (in io.ReadCloser, out io.Writer) {
+	if pipe {
+		return os.Stdin, os.Stdout
+	}
+
+	fd, err := os.Open(file)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Invalid input file: %v\n", err)
+		os.Exit(1)
+	}
+
+	return fd, os.Stdout
 }
 
 // parseArgs parses command line arguments.
-func parseArgs() (string, string, bool) {
+func parseArgs() (string, bool, string, string) {
 	target := flag.String("type", "",
 		fmt.Sprintf("Name of target image type: %s", strings.Join(lib.Formats(), ", ")))
+	optstr := flag.String("options", "", "List of encoder options.")
 	version := flag.Bool("version", false, "Display version information.")
 	flag.Parse()
 
@@ -34,14 +72,9 @@ func parseArgs() (string, string, bool) {
 		os.Exit(1)
 	}
 
-	if !lib.Supported(*target) {
-		fmt.Fprintf(os.Stderr, "Invalid target image format: %s\n", *target)
-		os.Exit(1)
+	if flag.NArg() == 0 {
+		return "", true, *target, *optstr
 	}
 
-	if flag.NArg() == 0 {
-		return "", *target, true
-	} else {
-		return filepath.Clean(flag.Args()[0]), *target, false
-	}
+	return filepath.Clean(flag.Args()[0]), false, *target, *optstr
 }
