@@ -2,6 +2,7 @@
 // Its contents can be found in the enclosed LICENSE file.
 
 /*
-
+imgscale resizes the given image to the specified dimensions
+and using the given scaling algorithm.
 */
-package imgtools
+package main
