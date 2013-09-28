@@ -7,7 +7,7 @@ import "strings"
 
 // Formats returns a list of supported image formats.
 func Formats() []string {
-	return []string {"png", "jpeg", "gif", "pnm"}
+	return []string{"png", "jpeg", "gif", "pnm"}
 }
 
 // Supported returns true if the given image format name
