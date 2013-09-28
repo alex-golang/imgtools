@@ -13,6 +13,7 @@ func main() {
 	parseArgs()
 }
 
+// parseArgs parses command line arguments.
 func parseArgs() {
 	version := flag.Bool("version", false, "Display version information.")
 
