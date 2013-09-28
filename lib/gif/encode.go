@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	lib.RegisterFormat("gif", encode, "quantizer")
+	lib.RegisterEncoder("gif", encode, "quantizer")
 }
 
 func encode(w io.Writer, m image.Image, options lib.OptionSet) error {

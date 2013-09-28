@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	lib.RegisterFormat("png", encode)
+	lib.RegisterEncoder("png", encode)
 }
 
 func encode(w io.Writer, m image.Image, options lib.OptionSet) error {

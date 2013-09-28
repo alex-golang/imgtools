@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	lib.RegisterFormat("jpeg", encode, "quality")
+	lib.RegisterEncoder("jpeg", encode, "quality")
 }
 
 func encode(w io.Writer, m image.Image, options lib.OptionSet) error {

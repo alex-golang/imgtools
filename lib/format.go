@@ -3,41 +3,13 @@
 
 package lib
 
-import (
-	"image"
-	"io"
-	"strings"
-)
+import "strings"
 
-type EncodeFunc func(io.Writer, image.Image, OptionSet) error
-
-var formats []*Format
-
-// RegisterFormat registers the encoder and decoder for
-// a given image format.
-//
-// The option list holds supported encoder option keys.
-func RegisterFormat(format string, ef EncodeFunc, options ...string) {
-	formats = append(formats, &Format{
-		Name:    format,
-		Encode:  ef,
-		Options: NewOptionSet(options...),
-	})
-}
-
-// Format describes the decoder and encoder of a supported
-// image type.
-type Format struct {
-	Name    string     // Name of the format: png, gif, pnm, etc
-	Encode  EncodeFunc // Encode handler
-	Options OptionSet  // Encoder options
-}
-
-// Formats returns a list of registered image format names.
+// Encoders returns a list of registered image format names.
 func Formats() []string {
-	list := make([]string, 0, len(formats))
+	list := make([]string, 0, len(Encoders))
 
-	for _, f := range formats {
+	for _, f := range Encoders {
 		list = append(list, f.Name)
 	}
 
@@ -47,7 +19,7 @@ func Formats() []string {
 // Supported returns true if the given image format name
 // is supported by this library.
 func Supported(format string) bool {
-	for _, f := range formats {
+	for _, f := range Encoders {
 		if strings.EqualFold(format, f.Name) {
 			return true
 		}
