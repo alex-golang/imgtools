@@ -11,8 +11,8 @@ destination colors. Each color is represented as a whitespace-separated set
 of RGBA values. For example, to swap red and blue pixels, the following map
 is used:
 
-	255 0 0 255   0 255 0 255
-	0 255 0 255   255 0 0 255
+	255 0 0 255   0 255 0 255       # red -> blue
+	0 255 0 255   255 0 0 255       # blue -> red
 
 A wildcard `?` in the source color can be used for any of the color channel
 values, to specify that any value for that channel is to be processed.
@@ -60,17 +60,11 @@ Note the use of the `+` operator. If we omit this, we are saying
 "set this channel to value 10.". With the `+` operator, we are
 saying "Add 10 the current channel value".
 
+Swapping color channels can be done by referencing a channel by
+its named placeholder in the destination color. For instance,
+to swap all red and blue channels and leave the rest as-is, we can use:
 
-### Builtin mappings
-
-The following set of builtin mappings can be used instead
-of a custom mapping:
-
-* **blackwhite**: Converts the input image to a black & white bitmap.
-* **grayscale**: Converts the image to grayscale.
-* **monochrome**: Same as grayscale, but allows specification of a custom colorspace.
-* **saturation**: Adjusts the image color saturation to the given levels.
-* **brightness**: Adjusts the image brightness to the given levels.
+    $r $g ? ?    $g $r ? ?
 
 
 ### Color values
@@ -86,5 +80,24 @@ Here is the number `255` in all the supported base notations:
 * **Decimal**: `10#255` or `255`
 * **Hexadecimal**: `16#ff`
 
+A full RGBA color in hexadecimal notation may be shortened using
+CSS notation with the appropriate prefix. This includes the use
+if the wildcard. For example, the RGBA notations shown on the left,
+and their equivalent hexadecimal notations on the right:
+
+    255 153 0 255  =>  16#ff9900ff
+	255   ? 0   ?  =>  16#ff??00??
+
+
+### Builtin mappings
+
+The following set of builtin mappings can be used instead
+of a custom mapping:
+
+* **blackwhite**: Converts the input image to a black & white bitmap.
+* **grayscale**: Converts the image to grayscale.
+* **monochrome**: Same as grayscale, but allows specification of a custom colorspace.
+* **saturation**: Adjusts the image color saturation to the given levels.
+* **brightness**: Adjusts the image brightness to the given levels.
 
 
