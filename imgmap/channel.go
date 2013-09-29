@@ -6,6 +6,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Channel represents a color channel value.
@@ -14,12 +15,33 @@ type Channel interface{}
 
 // parseChannel parses a channel value from the given input string.
 func parseChannel(data string) (Channel, error) {
-	var sign uint8
+	var operator string
 	var percentage bool
 
 	base := 10
 
-	if len(data) > 2 && data[0] == '0' && data[1] == 'x' {
+	switch {
+	case strings.HasPrefix(data, "-"):
+		operator = "-"
+		data = data[1:]
+	case strings.HasPrefix(data, "+"):
+		operator = "+"
+		data = data[1:]
+	case strings.HasPrefix(data, ">="):
+		operator = ">="
+		data = data[2:]
+	case strings.HasPrefix(data, ">"):
+		operator = ">"
+		data = data[2:]
+	case strings.HasPrefix(data, "<="):
+		operator = "<="
+		data = data[2:]
+	case strings.HasPrefix(data, "<"):
+		operator = "<"
+		data = data[2:]
+	}
+
+	if len(data) > 2 && strings.HasPrefix(data, "0x") {
 		base = 16
 		data = data[2:]
 	}
@@ -30,21 +52,21 @@ func parseChannel(data string) (Channel, error) {
 
 	case len(data) == 2 && data[0] == '#':
 		switch data[1] {
-		case 'r', 'R':
+		case 'r':
 			return NameR, nil
-		case 'g', 'G':
+		case 'g':
 			return NameG, nil
-		case 'b', 'B':
+		case 'b':
 			return NameB, nil
-		case 'a', 'A':
+		case 'a':
 			return NameA, nil
+		case 'm':
+			return NameMeanRGBA, nil
+		case 'M':
+			return NameMeanRGB, nil
 		default:
 			return nil, fmt.Errorf("Invalid named reference: %s", data)
 		}
-
-	case data[0] == '-' || data[0] == '+':
-		sign = data[0]
-		data = data[1:]
 	}
 
 	if data[len(data)-1] == '%' {
@@ -62,8 +84,8 @@ func parseChannel(data string) (Channel, error) {
 	}
 
 	return Number{
+		Operator:   operator,
 		Value:      uint8(n),
-		Sign:       sign,
 		Percentage: percentage,
 	}, nil
 }
@@ -80,12 +102,14 @@ const (
 	NameG
 	NameB
 	NameA
+	NameMeanRGBA
+	NameMeanRGB
 )
 
 // Number represents a numeric value.
-// It can cary a sign and/or percentile token.
+// It can carry an operator and/or percentile token.
 type Number struct {
+	Operator   string // 0, +, -, <, <=, >, >=
 	Value      uint8
-	Sign       uint8 // '+', '-' or 0
 	Percentage bool
 }

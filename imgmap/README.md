@@ -11,8 +11,8 @@ destination colors. Each color is represented as a whitespace-separated set
 of RGBA values. For example, to swap red and blue pixels, the following map
 is used:
 
-	255 0 0 255   0 255 0 255       # red -> blue
-	0 255 0 255   255 0 0 255       # blue -> red
+	255 0 0 255   0 255 0 255
+	0 255 0 255   255 0 0 255
 
 A wildcard `?` in the source color can be used for any of the color channel
 values, to specify that any value for that channel is to be processed.
@@ -60,25 +60,45 @@ Note the use of the `+` operator. If we omit this, we are saying
 "set this channel to value 10.". With the `+` operator, we are
 saying "Add 10 the current channel value".
 
+
+### Named references
+
+Named references are predefined to a limited set of values.
+These are **case sensitive**.
+
+* **#r**: Red channel value.
+* **#g**: Green channel value.
+* **#b**: Blue channel value.
+* **#a**: Alpha channel value.
+* **#m**: The mean value of all channels.
+* **#M**: The mean value of the RGB channels.
+
 Swapping color channels can be done by referencing a channel by
 its named placeholder in the destination color. For instance,
 to swap all red and blue channels and leave the rest as-is, we can use:
 
-    ? ? ? ?    #g #r ? ?
+    ? ? ? ?    #b ? #r ?
+
+To turn all pixels into their grayscale equivalents, while setting
+alpha to max, we can use:
+
+	? ? ? ?    #M #M #M 255
 
 
-### Color values
+### Numbers
 
 So far, the examples show the use of base-10 numbers as color channel values.
-The parser also supports hexadecimal values: `0xff`
+The parser also supports hexadecimal values: `0xff`. For example, the following
+two lines are functionally equivalent:
 
-A full RGBA color in hexadecimal notation may be shortened using
-CSS notation with the appropriate prefix. This includes the use
-if a wildcard. For example, the RGBA notations shown on the left,
-and their equivalent hexadecimal notations on the right:
+	255 153 0 255
+	0xff 0x99 0x00 0xff
 
-    255 153 0 255  =>  0xff9900ff
-	255   ? 0   ?  =>  0xff??00??
+
+### Comments
+
+A mapping file can contain comments. These are prefixed with `;`
+and span the remainder of the line.
 
 
 ### Builtin mappings

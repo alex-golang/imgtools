@@ -25,72 +25,29 @@ func ParseColor(data string) (*Color, error) {
 
 	list := split(strings.Replace(data, " ", ",", -1), ",")
 
-	switch len(list) {
-	case 1:
-		return parseHexColor(list[0])
-	case 4:
-		return parseRGBAColor(list[0], list[1], list[2], list[3])
-	default:
+	if len(list) != 4 {
 		return nil, fmt.Errorf("Invalid color value %q", data)
 	}
-}
 
-// parseHexColor parses a single hex value into a color.
-// This should look like: 16#rrggbbaa
-func parseHexColor(clr string) (*Color, error) {
-	var err error
-
-	if !strings.HasPrefix(clr, "0x") || len(clr) != 10 {
-		return nil, fmt.Errorf("Invalid hexadecimal color value: %s", clr)
-	}
-
-	clr = clr[2:]
-
-	c := new(Color)
-	c.R, err = parseChannel("0x" + clr[:2])
-	if err != nil {
-		return nil, err
-	}
-
-	c.G, err = parseChannel("0x" + clr[2:4])
-	if err != nil {
-		return nil, err
-	}
-
-	c.B, err = parseChannel("0x" + clr[4:6])
-	if err != nil {
-		return nil, err
-	}
-
-	c.A, err = parseChannel("0x" + clr[6:])
-	if err != nil {
-		return nil, err
-	}
-
-	return c, nil
-}
-
-// parseRGBAColor parses 4 RGBA components into a color.
-func parseRGBAColor(r, g, b, a string) (*Color, error) {
 	var err error
 	c := new(Color)
 
-	c.R, err = parseChannel(r)
+	c.R, err = parseChannel(list[0])
 	if err != nil {
 		return nil, err
 	}
 
-	c.G, err = parseChannel(g)
+	c.G, err = parseChannel(list[1])
 	if err != nil {
 		return nil, err
 	}
 
-	c.B, err = parseChannel(b)
+	c.B, err = parseChannel(list[2])
 	if err != nil {
 		return nil, err
 	}
 
-	c.A, err = parseChannel(a)
+	c.A, err = parseChannel(list[3])
 	if err != nil {
 		return nil, err
 	}
