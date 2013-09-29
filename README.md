@@ -1,6 +1,6 @@
 ## imgtools
 
-**imgtools** holds a set of commands intended to do image manipulation.
+**imgtools** holds a set of commands intended for image manipulation.
 Each tool performs a specific action on a given input image.
 
 An image can be supplied as a file path in a command line argument,

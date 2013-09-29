@@ -64,29 +64,21 @@ Swapping color channels can be done by referencing a channel by
 its named placeholder in the destination color. For instance,
 to swap all red and blue channels and leave the rest as-is, we can use:
 
-    $r $g ? ?    $g $r ? ?
+    ? ? ? ?    #g #r ? ?
 
 
 ### Color values
 
 So far, the examples show the use of base-10 numbers as color channel values.
-The parser supports additional bases by prefixing the number with the base. 
-With the exception of base-10 (decimal) numbers, the prefixes are mandatory.
-
-Here is the number `255` in all the supported base notations:
-
-* **Binary**: `2#11111111`
-* **Octal**: `8#377`
-* **Decimal**: `10#255` or `255`
-* **Hexadecimal**: `16#ff`
+The parser also supports hexadecimal values: `0xff`
 
 A full RGBA color in hexadecimal notation may be shortened using
 CSS notation with the appropriate prefix. This includes the use
-if the wildcard. For example, the RGBA notations shown on the left,
+if a wildcard. For example, the RGBA notations shown on the left,
 and their equivalent hexadecimal notations on the right:
 
-    255 153 0 255  =>  16#ff9900ff
-	255   ? 0   ?  =>  16#ff??00??
+    255 153 0 255  =>  0xff9900ff
+	255   ? 0   ?  =>  0xff??00??
 
 
 ### Builtin mappings
