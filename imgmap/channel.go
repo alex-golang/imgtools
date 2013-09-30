@@ -60,8 +60,12 @@ func parseChannel(data string) (Channel, error) {
 			return NameB, nil
 		case 'a':
 			return NameA, nil
-		case 'm':
-			return NameMean, nil
+		case 'A':
+			return NameAverage, nil
+		case 'l':
+			return NameLightness, nil
+		case 'L':
+			return NameLuminosity, nil
 		default:
 			return nil, fmt.Errorf("Invalid named reference: %s", data)
 		}
@@ -100,7 +104,9 @@ const (
 	NameG
 	NameB
 	NameA
-	NameMean
+	NameLightness
+	NameLuminosity
+	NameAverage
 )
 
 // Number represents a numeric value.

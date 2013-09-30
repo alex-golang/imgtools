@@ -67,11 +67,19 @@ saying "Add 10 the current channel value".
 Named references are predefined to a limited set of values.
 These are **case sensitive**.
 
-* **#r**: Red channel value.
-* **#g**: Green channel value.
-* **#b**: Blue channel value.
-* **#a**: Alpha channel value.
-* **#m**: The mean value of the RGB channels.
+* **#r**: Current red channel value.
+* **#g**: Current green channel value.
+* **#b**: Current blue channel value.
+* **#a**: Current alpha channel value.
+* **#A**: The average of the RGB channels: `(r + g + b) / 3`
+* **#l**: The RGB lightness: Averages the most prominent amd least prominent
+  channel values: `(max(r, g, b) + min(r + g + b)) / 2`
+* **#L**: The RGB luminosity is a more sophisticated version of
+  the average method. It also averages the values, but it forms a
+  weighted average to account for human perception. We're more
+  sensitive to green than other colors, so green is weighted
+  most heavily. This uses the BT709 grayscale weights:
+  `(R*0.2125 + G*0.7154 + B*0.0721) / 3`.
 
 Swapping color channels can be done by referencing a channel by
 its named placeholder in the destination color. For instance,
