@@ -32,13 +32,13 @@ func parseChannel(data string) (Channel, error) {
 		data = data[2:]
 	case strings.HasPrefix(data, ">"):
 		operator = ">"
-		data = data[2:]
+		data = data[1:]
 	case strings.HasPrefix(data, "<="):
 		operator = "<="
 		data = data[2:]
 	case strings.HasPrefix(data, "<"):
 		operator = "<"
-		data = data[2:]
+		data = data[1:]
 	}
 
 	if len(data) > 2 && strings.HasPrefix(data, "0x") {
@@ -61,9 +61,7 @@ func parseChannel(data string) (Channel, error) {
 		case 'a':
 			return NameA, nil
 		case 'm':
-			return NameMeanRGBA, nil
-		case 'M':
-			return NameMeanRGB, nil
+			return NameMean, nil
 		default:
 			return nil, fmt.Errorf("Invalid named reference: %s", data)
 		}
@@ -102,8 +100,7 @@ const (
 	NameG
 	NameB
 	NameA
-	NameMeanRGBA
-	NameMeanRGB
+	NameMean
 )
 
 // Number represents a numeric value.

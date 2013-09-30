@@ -10,18 +10,18 @@ import (
 	"os"
 )
 
-// parseExpression parses a single color map expression and
+// parseExpression parses a single Rule map expression and
 // applies it to the source and destination images.
-func parseExpression(linecount int, line []byte, src, dst draw.Image) bool {
+func parseExpression(line int, expr []byte, src, dst draw.Image) bool {
 	// Strip whitespace and code comments.
-	if idx := bytes.Index(line, semicolon); idx > -1 {
-		line = line[:idx]
+	if idx := bytes.Index(expr, semicolon); idx > -1 {
+		expr = expr[:idx]
 	}
 
-	line = bytes.Replace(line, tab, space, -1)
+	expr = bytes.Replace(expr, tab, space, -1)
 
-	// Split into source and destination color mappings.
-	list := splitBytes(line, space)
+	// Split into source and destination Rule mappings.
+	list := splitBytes(expr, space)
 	if len(list) != 8 {
 		return false
 	}
@@ -29,20 +29,19 @@ func parseExpression(linecount int, line []byte, src, dst draw.Image) bool {
 	left := bytes.Join(list[:4], space)
 	right := bytes.Join(list[4:], space)
 
-	from, err := ParseColor(string(left))
+	from, err := ParseRule(string(left))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Source color at line %d: %v", linecount, err)
+		fmt.Fprintf(os.Stderr, "Source Rule at line %d: %v\n", line, err)
 		return false
 	}
 
-	to, err := ParseColor(string(right))
+	to, err := ParseRule(string(right))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Destination color at line %d: %v", linecount, err)
+		fmt.Fprintf(os.Stderr, "Destination Rule at line %d: %v\n", line, err)
 		return false
 	}
 
-	if !validColor(from) {
-		fmt.Fprintf(os.Stderr, "Invalid source color at line %d", linecount)
+	if !validFrom(line, from) || !validTo(line, to) {
 		return false
 	}
 
@@ -50,16 +49,57 @@ func parseExpression(linecount int, line []byte, src, dst draw.Image) bool {
 	return true
 }
 
-// validColor returns true if the given color contains no
-// invalid filter data for a source color.
-func validColor(c *Color) bool {
-	return validChannel(c.R) && validChannel(c.G) &&
-		validChannel(c.B) && validChannel(c.A)
+// validFrom returns false if the given Rule does not contain values
+// which make no sense in this context.
+func validFrom(line int, r *Rule) bool {
+	return validFromChannel(line, r.R) && validFromChannel(line, r.G) &&
+		validFromChannel(line, r.B) && validFromChannel(line, r.A)
 }
 
-// validFrom returns true if the given color contains no
-// invalid filter data for a source color.
-func validChannel(c Channel) bool {
+func validFromChannel(line int, c Channel) bool {
+	switch tt := c.(type) {
+	case Number:
+		switch tt.Operator {
+		case "", "<", "<=", ">", ">=":
+		default:
+			fmt.Fprintf(os.Stderr, "Line %d: Operator %q is not valid in a source Rule context.\n", line, tt.Operator)
+			return false
+		}
 
+		if tt.Percentage {
+			fmt.Fprintf(os.Stderr, "Line %d: Percentages are not valid in a source Rule context.\n", line)
+			return false
+		}
+
+		return true
+
+	case Name:
+		fmt.Fprintf(os.Stderr, "Line %d: Named reference is not valid in a source Rule context.\n", line)
+		return false
+	}
+
+	// wildcard
+	return true
+}
+
+// validTo returns false if the given Rule does not contain values
+// which make no sense in this context.
+func validTo(line int, r *Rule) bool {
+	return validToChannel(line, r.R) && validToChannel(line, r.G) &&
+		validToChannel(line, r.B) && validToChannel(line, r.A)
+}
+
+func validToChannel(line int, c Channel) bool {
+	num, ok := c.(Number)
+	if ok {
+		switch num.Operator {
+		case "", "+", "-":
+		default:
+			fmt.Fprintf(os.Stderr, "Line %d: Operator %q is not valid in a destination Rule context.\n", line, num.Operator)
+			return false
+		}
+	}
+
+	// wildcard & named reference
 	return true
 }

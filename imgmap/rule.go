@@ -8,29 +8,29 @@ import (
 	"strings"
 )
 
-// Color represents a single rgba color.
-type Color struct {
+// Rule represents a single rgba Rule.
+type Rule struct {
 	R Channel
 	G Channel
 	B Channel
 	A Channel
 }
 
-// ParseColor parses a color from the given input string.
-func ParseColor(data string) (*Color, error) {
+// ParseRule parses a Rule from the given input string.
+func ParseRule(data string) (*Rule, error) {
 	data = strings.TrimSpace(data)
 	if len(data) == 0 {
-		return nil, fmt.Errorf("Invalid color value")
+		return nil, fmt.Errorf("Invalid Rule value")
 	}
 
 	list := splitString(strings.Replace(data, " ", ",", -1), ",")
 
 	if len(list) != 4 {
-		return nil, fmt.Errorf("Invalid color value %q", data)
+		return nil, fmt.Errorf("Invalid Rule value %q", data)
 	}
 
 	var err error
-	c := new(Color)
+	c := new(Rule)
 
 	c.R, err = parseChannel(list[0])
 	if err != nil {

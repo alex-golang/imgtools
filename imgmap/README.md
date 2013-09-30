@@ -71,8 +71,7 @@ These are **case sensitive**.
 * **#g**: Green channel value.
 * **#b**: Blue channel value.
 * **#a**: Alpha channel value.
-* **#m**: The mean value of all channels.
-* **#M**: The mean value of the RGB channels.
+* **#m**: The mean value of the RGB channels.
 
 Swapping color channels can be done by referencing a channel by
 its named placeholder in the destination color. For instance,
@@ -83,7 +82,7 @@ to swap all red and blue channels and leave the rest as-is, we can use:
 To turn all pixels into their grayscale equivalents, while setting
 alpha to max, we can use:
 
-	? ? ? ?    #M #M #M 255
+	? ? ? ?    #m #m #m 255
 
 
 ### Numbers
