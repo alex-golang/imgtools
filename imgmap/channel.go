@@ -106,7 +106,7 @@ const (
 // Number represents a numeric value.
 // It can carry an operator and/or percentile token.
 type Number struct {
-	Operator   string // 0, +, -, <, <=, >, >=
+	Operator   string // <empty>, +, -, <, <=, >, >=
 	Value      uint8
 	Percentage bool
 }
