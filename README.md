@@ -1,11 +1,23 @@
 ## imgtools
 
-**imgtools** holds a set of commands intended for image manipulation.
-Each tool performs a specific action on a given input image.
+**imgtools** holds a set of command line tools intended for
+image manipulation. Each tool performs a specific action on
+a given input image.
 
 An image can be supplied as a file path in a command line argument,
 or its contents can be piped in through `stdin`. The latter allows all
 commands to be chained together using pipes.
+
+**Note**" This is work in progres. Some commands are not implemented yet
+and others may benefit from optimization and feature enhancements.
+
+
+### TODO
+
+* Implement GIF encoder.
+* Implement `imgscale` tool.
+* Implement `imgquantize` tool.
+* Enhance `imgmap` tool with more/better filter constructs.
 
 
 ### Tools
