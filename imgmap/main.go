@@ -28,19 +28,17 @@ var (
 
 func main() {
 	var linecount int
+	var line []byte
+	var err error
 
 	file, expr := parseArgs()
 	src, dst := getImages(file)
 
-	for {
+	for err != io.EOF {
 		linecount++
-		line, err := expr.ReadBytes('\n')
+		line, err = expr.ReadBytes('\n')
 
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-
+		if err != nil && err != io.EOF {
 			fmt.Fprintf(os.Stderr, "Read expression: %v\n", err)
 			os.Exit(1)
 		}
@@ -50,7 +48,7 @@ func main() {
 		}
 	}
 
-	err := lib.Encode(os.Stdout, "png", src, "")
+	err = lib.Encode(os.Stdout, "png", src, "")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Write output image: %v\n", err)
 		os.Exit(1)
