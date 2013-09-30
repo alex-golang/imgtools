@@ -91,7 +91,7 @@ to swap all red and blue channels and leave the rest as-is, we can use:
 To turn all pixels into their grayscale equivalents, while setting
 alpha to max, we can use:
 
-	? ? ? ?    #m #m #m 255
+	? ? ? ?    #L #L #L 255
 
 
 ### Numbers
