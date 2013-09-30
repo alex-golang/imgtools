@@ -72,7 +72,7 @@ These are **case sensitive**.
 * **#g**: Current green channel value.
 * **#b**: Current blue channel value.
 * **#a**: Current alpha channel value.
-* **#A**: The average of the RGB channels: `(r, g, b) / 3`
+* **#A**: The average of the RGB channels: `(r + g + b) / 3`
 * **#l**: The RGB lightness: Averages the most prominent amd least
   prominent channel values: `(max(r, g, b) + min(r + g + b)) / 2`
 * **#L**: The RGB luminosity is a more sophisticated version of
