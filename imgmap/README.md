@@ -10,11 +10,10 @@ argument, or as a single expression in the `-expr` command line argument.
 
 A color map comes in the form of a list of whitespace-separated source- and
 destination colors. Each color is represented as a whitespace-separated set
-of RGBA values. For example, to swap red and blue pixels, the following map
+of RGBA values. For example, to turn red pixels into blue, the following map
 is used:
 
 	255 0 0 255   0 255 0 255
-	0 255 0 255   255 0 0 255
 
 A wildcard `?` in the source color can be used for any of the color channel
 values, to specify that any value for that channel is to be processed.
@@ -163,6 +162,15 @@ cat orig.png | imgmap -expr "? ? ? ?   +20 +20 +20 ?"    > lightena.png
 cat orig.png | imgmap -expr "? ? ? ?   +20% +20% +20% ?" > lightenb.png
 cat orig.png | imgmap -expr "? ? ? ?   -20 -20 -20 ?"    > darkena.png
 cat orig.png | imgmap -expr "? ? ? ?   -20% -20% -20% ?" > darkenb.png
+</pre></td></tr></table>
+
+<table>
+<tr><th>Custom filter</th></tr>
+<tr>
+<th><img src="http://jteeuwen.nl/img/imgtools/custom.png" /><br>Bring out the flower</th>
+</tr>
+<tr><td colspan="4"><pre>
+cat orig.png | imgmap -expr "&lt;200 ? ? ?  #L #L #L ?" > custom.png
 </pre></td></tr></table>
 
 
