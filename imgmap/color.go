@@ -23,7 +23,7 @@ func ParseColor(data string) (*Color, error) {
 		return nil, fmt.Errorf("Invalid color value")
 	}
 
-	list := split(strings.Replace(data, " ", ",", -1), ",")
+	list := splitString(strings.Replace(data, " ", ",", -1), ",")
 
 	if len(list) != 4 {
 		return nil, fmt.Errorf("Invalid color value %q", data)
@@ -53,19 +53,4 @@ func ParseColor(data string) (*Color, error) {
 	}
 
 	return c, nil
-}
-
-// split splits the input data and returns a list with empty elements removed.
-func split(data, token string) []string {
-	a := strings.Split(data, token)
-	b := make([]string, 0, len(a))
-
-	for _, v := range a {
-		v = strings.TrimSpace(v)
-		if len(v) > 0 {
-			b = append(b, v)
-		}
-	}
-
-	return b
 }

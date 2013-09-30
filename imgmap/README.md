@@ -2,6 +2,7 @@
 
 imgmap remaps certain colours to new values. The color mapping is
 supplied as a command line parameter or a builtin mapping is supplied.
+Its output is always a PNG image.
 
 
 ### Mappings

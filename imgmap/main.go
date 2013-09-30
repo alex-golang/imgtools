@@ -4,38 +4,90 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"flag"
 	"fmt"
+	"github.com/jteeuwen/imgtools/lib"
+	_ "github.com/jteeuwen/imgtools/lib/gif"
+	_ "github.com/jteeuwen/imgtools/lib/jpeg"
+	_ "github.com/jteeuwen/imgtools/lib/png"
+	_ "github.com/jteeuwen/imgtools/lib/pnm"
+	"image"
+	"image/draw"
 	"io"
 	"os"
 	"path/filepath"
 )
 
-func main() {
-	input, expr := parseArgs()
-	in, out := getStreams(input)
+var (
+	semicolon = []byte{';'}
+	tab       = []byte{'\t'}
+	space     = []byte{' '}
+)
 
-	_, _, _ = in, out, expr
+func main() {
+	var linecount int
+
+	file, expr := parseArgs()
+	src, dst := getImages(file)
+
+	for {
+		linecount++
+		line, err := expr.ReadBytes('\n')
+
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+
+			fmt.Fprintf(os.Stderr, "Read expression: %v\n", err)
+			os.Exit(1)
+		}
+
+		if parseExpression(linecount, line, src, dst) {
+			src, dst = dst, src
+		}
+	}
+
+	err := lib.Encode(os.Stdout, "png", dst, "")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Write output image: %v\n", err)
+		os.Exit(1)
+	}
 }
 
 // getStreams opens ands returns the input and output streams.
-func getStreams(input string) (in io.ReadCloser, out io.Writer) {
+func getImages(input string) (draw.Image, draw.Image) {
+	var fd io.ReadCloser
+	var err error
+
 	if len(input) == 0 {
-		return os.Stdin, os.Stdout
+		fd = os.Stdin
+	} else {
+		fd, err = os.Open(input)
+		defer fd.Close()
 	}
 
-	fd, err := os.Open(input)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Invalid input file: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Open input file: %v", err)
 		os.Exit(1)
 	}
 
-	return fd, os.Stdout
+	img, _, err := lib.Decode(fd)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Decode image: %v", err)
+		os.Exit(1)
+	}
+
+	return img.(draw.Image), image.NewRGBA(img.Bounds())
 }
 
 // parseArgs parses command line arguments.
-func parseArgs() (string, []byte) {
+func parseArgs() (string, *bufio.Reader) {
+	var err error
+	var data io.Reader
+
 	version := flag.Bool("version", false, "")
 	mapfile := flag.String("map", "", "")
 	expr := flag.String("expr", "", "")
@@ -53,39 +105,21 @@ func parseArgs() (string, []byte) {
 		os.Exit(1)
 	}
 
-	data := []byte(*expr)
+	data = bytes.NewBufferString(*expr)
 
 	if len(*mapfile) > 0 {
-		fd, err := os.Open(filepath.Clean(*mapfile))
+		data, err = os.Open(filepath.Clean(*mapfile))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(1)
 		}
-
-		defer fd.Close()
-
-		var buf bytes.Buffer
-		io.Copy(&buf, fd)
-		data = buf.Bytes()
-	}
-
-	data = bytes.TrimSpace(data)
-	sz := len(data)
-
-	if sz == 0 {
-		fmt.Fprintf(os.Stderr, "Invalid map expression specified; no data.\n")
-		os.Exit(1)
-	}
-
-	if data[sz-1] != '\n' {
-		data = append(data, '\n')
 	}
 
 	if flag.NArg() > 0 {
-		return flag.Args()[0], data
+		return flag.Args()[0], bufio.NewReader(data)
 	}
 
-	return "", data
+	return "", bufio.NewReader(data)
 }
 
 func usage() {
