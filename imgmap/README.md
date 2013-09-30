@@ -6,6 +6,17 @@ in an external text file, supplied through the `-map` command line
 argument, or as a single expression in the `-expr` command line argument.
 
 
+### Map file
+
+When specifying multiple mapping rules in an external map file, one
+should be aware of how these rules are interpreted. The program
+processes the rules from top to bottom. On each rule application,
+the program reads pixels from an input image and writes the transformed
+result to an output image. On the next rule, the output from the 
+previous rule becomes the input for the new rule. So only the
+first rule operates on the original input image.
+
+
 ### Mappings
 
 A color map comes in the form of a list of whitespace-separated source- and
