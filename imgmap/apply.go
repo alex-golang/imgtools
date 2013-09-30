@@ -33,36 +33,36 @@ func transform(clr color.Color, from, to *Color) color.Color {
 	}
 
 	r, g, b, a := clr.RGBA()
-	meanrgba := (r + g + b + a) / 4
-	meanrgb := (r + g + b) / 3
+	mrgba := (r + g + b + a) / 4
+	mrgb := (r + g + b) / 3
 
 	return color.RGBA{
-		_transform(r, g, b, a, r, meanrgb, meanrgba, to.R),
-		_transform(r, g, b, a, g, meanrgb, meanrgba, to.G),
-		_transform(r, g, b, a, b, meanrgb, meanrgba, to.B),
-		_transform(r, g, b, a, a, meanrgb, meanrgba, to.A),
+		_transform(r, g, b, a, r, mrgb, mrgba, to.R),
+		_transform(r, g, b, a, g, mrgb, mrgba, to.G),
+		_transform(r, g, b, a, b, mrgb, mrgba, to.B),
+		_transform(r, g, b, a, a, mrgb, mrgba, to.A),
 	}
 }
 
 // _transform transforms a single channel using the specified mapping.
-func _transform(r, g, b, a, curr, meanrgb, meanrgba uint32, to Channel) uint8 {
+func _transform(sr, sg, sb, sa, curr, mrgb, mrgba uint32, to Channel) uint8 {
 	switch tt := to.(type) {
 	case Number:
 
 	case Name:
 		switch tt {
 		case NameR:
-			return uint8(r >> 8)
+			return uint8(sr >> 8)
 		case NameG:
-			return uint8(g >> 8)
+			return uint8(sg >> 8)
 		case NameB:
-			return uint8(b >> 8)
+			return uint8(sb >> 8)
 		case NameA:
-			return uint8(a >> 8)
+			return uint8(sa >> 8)
 		case NameMeanRGBA:
-			return uint8(meanrgba)
+			return uint8(mrgba)
 		case NameMeanRGB:
-			return uint8(meanrgb)
+			return uint8(mrgb)
 		}
 	}
 
