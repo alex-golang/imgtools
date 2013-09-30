@@ -50,7 +50,7 @@ func main() {
 		}
 	}
 
-	err := lib.Encode(os.Stdout, "png", dst, "")
+	err := lib.Encode(os.Stdout, "png", src, "")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Write output image: %v\n", err)
 		os.Exit(1)
