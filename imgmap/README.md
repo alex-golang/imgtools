@@ -1,8 +1,9 @@
 ## imgmap
 
-imgmap remaps certain colours to new values. The color mapping is
-supplied as a command line parameter or a builtin mapping is supplied.
-Its output is always a PNG image.
+imgmap remaps certain colours in an input image to new values.
+Color mappings are defined as one or more expressions, either
+in an external text file, supplied through the `-map` command line
+argument, or as a single expression in the `-expr` command line argument.
 
 
 ### Mappings
@@ -79,8 +80,14 @@ These are **case sensitive**.
   weighted average to account for human perception. We're more
   sensitive to green than other colors, so green is weighted
   most heavily. The formula for this is as follows:
-  
-      gammaSRGB(0.212655*invGammaSRGB(R) + 0.715158*invGammaSRGB(G) + 0.072187*invGammaSRGB(B))
+
+```go
+	lum := gamma_sRGB(
+		0.212655 * inverse_gamma_sRGB(R) +
+		0.715158 * inverse_gamma_sRGB(G) +
+		0.072187 * inverse_gamma_sRGB(B)
+	)
+```
 
 Swapping color channels can be done by referencing a channel by
 its named placeholder in the destination color. For instance,
