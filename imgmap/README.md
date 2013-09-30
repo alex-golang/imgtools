@@ -110,15 +110,52 @@ A mapping file can contain comments. These are prefixed with `;`
 and span the remainder of the line.
 
 
-### Builtin mappings
+### Examples
 
-The following set of builtin mappings can be used instead
-of a custom mapping:
+<table>
+<tr><th>Original image</th></tr>
+<tr><th><img src="http://jteeuwen.nl/img/imgtools/original.png" /></th></tr>
+</table>
 
-* **blackwhite**: Converts the input image to a black & white bitmap.
-* **grayscale**: Converts the image to grayscale.
-* **monochrome**: Same as grayscale, but allows specification of a custom colorspace.
-* **saturation**: Adjusts the image color saturation to the given levels.
-* **brightness**: Adjusts the image brightness to the given levels.
+<table>
+<tr><th colspan="3">Filter color channels</th></tr>
+<tr>
+<th><img src="http://jteeuwen.nl/img/imgtools/red.png" /><br>red</th>
+<th><img src="http://jteeuwen.nl/img/imgtools/green.png" /><br>green</th>
+<th><img src="http://jteeuwen.nl/img/imgtools/blue.png" /><br>blue</th>
+</tr>
+<tr><td colspan="3"><pre>
+cat orig.png | imgmap -expr "? ? ? ?   ? 0 0 255" > red.png
+cat orig.png | imgmap -expr "? ? ? ?   0 ? 0 255" > green.png
+cat orig.png | imgmap -expr "? ? ? ?   0 0 ? 255" > blue.png
+</pre></td></tr></table>
+
+<table>
+<tr><th colspan="3">Grayscale conversions</th></tr>
+<tr>
+<th><img src="http://jteeuwen.nl/img/imgtools/average.png" /><br>average</th>
+<th><img src="http://jteeuwen.nl/img/imgtools/lightness.png" /><br>lightness</th>
+<th><img src="http://jteeuwen.nl/img/imgtools/luminosity.png" /><br>luminosity</th>
+</tr>
+<tr><td colspan="3"><pre>
+cat orig.png | imgmap -expr "? ? ? ?   #l #l #l ?" > lightness.png
+cat orig.png | imgmap -expr "? ? ? ?   #A #A #A ?" > average.png
+cat orig.png | imgmap -expr "? ? ? ?   #L #L #L ?" > luminosity.png
+</pre></td></tr></table>
+
+<table>
+<tr><th colspan="4">Lighten/darken</th></tr>
+<tr>
+<th><img src="http://jteeuwen.nl/img/imgtools/lightena.png" /><br>increase by 20</th>
+<th><img src="http://jteeuwen.nl/img/imgtools/lightenb.png" /><br>increase by 20%</th>
+<th><img src="http://jteeuwen.nl/img/imgtools/darkena.png" /><br>decrease by 20</th>
+<th><img src="http://jteeuwen.nl/img/imgtools/darkenb.png" /><br>decrease by 20%</th>
+</tr>
+<tr><td colspan="4"><pre>
+cat orig.png | imgmap -expr "? ? ? ?   +20 +20 +20 ?"    > lightena.png
+cat orig.png | imgmap -expr "? ? ? ?   +20% +20% +20% ?" > lightenb.png
+cat orig.png | imgmap -expr "? ? ? ?   -20 -20 -20 ?"    > darkena.png
+cat orig.png | imgmap -expr "? ? ? ?   -20% -20% -20% ?" > darkenb.png
+</pre></td></tr></table>
 
 
