@@ -78,7 +78,13 @@ func getImages(input string) (draw.Image, draw.Image) {
 		os.Exit(1)
 	}
 
-	return img.(draw.Image), image.NewRGBA(img.Bounds())
+	dimg, ok := img.(draw.Image)
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Decode image: %T is not draw.Image; missing Set method.\n", img)
+		os.Exit(1)
+	}
+
+	return dimg, image.NewRGBA(img.Bounds())
 }
 
 // parseArgs parses command line arguments.
