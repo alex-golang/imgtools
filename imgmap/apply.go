@@ -36,10 +36,22 @@ func transform(clr color.Color, from, to *Rule) color.Color {
 		return clr
 	}
 
-	// Compute three different types of greyscale conversion.
+	// Compute three different types of grayscale conversion.
 	// These can be applied by named references.
 	average := uint8(((r + g + b) / 3) >> 8)
 	lightness := uint8(((min(min(r, g), b) + max(max(r, g), b)) / 2) >> 8)
+
+	// For luminosity it is necessary to apply an inverse of the gamma
+	// function for the color space before calculating the inner product.
+	// Then you apply the gamma function to the reduced value. Failure to
+	// incorporate the gamma function can result in errors of up to 20%.
+	//
+	// For typical computer stuff, the color space is sRGB. The right
+	// numbers for sRGB are approx. 0.21, 0.72, 0.07. Gamma for sRGB
+	// is a composite function that approximates exponentiation by 1/2.2
+	//
+	// This is a rather expensive operation, but gives a much more accurate
+	// and satisfactory result than the average and lightness versions.
 	luminosity := gammaSRGB(0.212655*invGammaSRGB(br) + 0.715158*invGammaSRGB(bg) + 0.072187*invGammaSRGB(bb))
 
 	// Transform pixel.
@@ -58,13 +70,19 @@ func _transform(sr, sg, sb, sa, curr, average, lightness, luminosity uint8, to C
 		switch tt.Operator {
 		case "+":
 			if tt.Percentage {
-				perc := float64(curr>>8) * 0.01
+				perc := float64(curr) * 0.01
 				v := int(curr) + int(perc*float64(tt.Value))
-				return uint8(v % 0xff)
+				if v > 0xff {
+					v = 0xff
+				}
+				return uint8(v)
 			}
 
 			v := int(curr) + int(tt.Value)
-			return uint8(v % 0xff)
+			if v > 0xff {
+				v = 0xff
+			}
+			return uint8(v)
 
 		case "-":
 			if tt.Percentage {
@@ -86,7 +104,10 @@ func _transform(sr, sg, sb, sa, curr, average, lightness, luminosity uint8, to C
 			if tt.Percentage {
 				perc := float64(curr) * 0.01
 				v := int(perc * float64(tt.Value))
-				return uint8(v % 0xff)
+				if v > 0xff {
+					v = 0xff
+				}
+				return uint8(v)
 			}
 
 			return tt.Value
