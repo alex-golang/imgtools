@@ -11,7 +11,7 @@ import (
 	_ "github.com/jteeuwen/imgtools/lib/jpeg"
 	_ "github.com/jteeuwen/imgtools/lib/png"
 	_ "github.com/jteeuwen/imgtools/lib/pnm"
-	"github.com/nfnt/resize"
+	"github.com/jteeuwen/resize"
 	"image"
 	"io"
 	"math"
