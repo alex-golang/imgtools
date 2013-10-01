@@ -21,8 +21,12 @@ first rule operates on the original input image.
 
 A color map comes in the form of a list of whitespace-separated source- and
 destination colors. Each color is represented as a whitespace-separated set
-of RGBA values. For example, to turn red pixels into blue, the following map
-is used:
+of RGBA values. The first color serves as a filter to determine which pixels
+in the image should have the transformation applied. The second color 
+specifies the actual transformation to be applied. Any pixel which does
+not match the filter, is copied over as-is.
+
+For example, to turn red pixels into blue, the following map is used:
 
 	255 0 0 255   0 255 0 255
 
