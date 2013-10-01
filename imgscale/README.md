@@ -3,7 +3,14 @@
 imgscale resizes the given image to the specified dimensions
 and using the given scaling algorithm.
 
-### Dependencies
+Supported scaling algorithms are:
 
-	go get github.com/nfnt/resize
+* NearestNeighbor
+* Bilinear
+* Bicubic
+* MitchellNetravali
+* Lanczos2Lut
+* Lanczos2
+* Lanczos3Lut
+* Lanczos3
 
