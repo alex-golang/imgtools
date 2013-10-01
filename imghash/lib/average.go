@@ -4,7 +4,7 @@
 package lib
 
 import (
-	"github.com/jteeuwen/resize"
+	scale "github.com/jteeuwen/imgtools/imgscale/lib"
 	"image"
 )
 
@@ -24,7 +24,7 @@ import (
 // "average" is located and therefore changing which bits are above/below the
 // average.
 func Average(img image.Image) uint64 {
-	img = resize.Resize(8, 8, img, resize.Bicubic)
+	img = scale.Resize(8, 8, img, scale.Bicubic)
 	img = grayscale(img)
 	mean := avgMean(img)
 	return avgHash(img, mean)
