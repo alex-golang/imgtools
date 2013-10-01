@@ -45,6 +45,7 @@ as well as some externally defined formats:
 ### Dependencies
 
 	go get github.com/jteeuwen/pnm
+	go get github.com/nfnt/resize
 
 
 ### Documentation
