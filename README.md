@@ -24,6 +24,7 @@ and others may benefit from optimization and feature enhancements.
 * **imgconv**: Saves the image as a different image type.
 * **imgmap**: Remaps specified colors in the input image to a set of new colors.
 * **imghash**: Computes a perceptual hash for the input image.
+* **imgindex**: Builds a database of image hashes for a directory of image files.
 
 
 ### Image types
@@ -45,7 +46,6 @@ as well as some externally defined formats:
 ### Dependencies
 
 	go get github.com/jteeuwen/pnm
-	go get github.com/jteeuwen/resize
 
 
 ### Documentation
