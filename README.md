@@ -15,7 +15,6 @@ and others may benefit from optimization and feature enhancements.
 ### TODO
 
 * Implement GIF encoder.
-* Implement `imgquantize` tool.
 * Implement more imghash algorithms.
 
 
@@ -25,7 +24,6 @@ and others may benefit from optimization and feature enhancements.
 * **imgconv**: Saves the image as a different image type.
 * **imgmap**: Remaps specified colors in the input image to a set of new colors.
 * **imghash**: Computes a perceptual hash for the input image.
-* **imgquantize**: Provides a set of different image quantization algorithms.
 
 
 ### Image types
