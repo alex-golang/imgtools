@@ -24,7 +24,7 @@ import (
 // "average" is located and therefore changing which bits are above/below the
 // average.
 func Average(img image.Image) uint64 {
-	img = scale.Resize(8, 8, img, scale.Bicubic)
+	img = scale.Resize(8, 8, img, scale.NearestNeighbor)
 	img = grayscale(img)
 	mean := avgMean(img)
 	return avgHash(img, mean)

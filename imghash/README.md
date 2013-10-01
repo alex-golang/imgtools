@@ -1,6 +1,6 @@
 ## imghash
 
-imghash computes a Perceptual Hash for a given input image.
+imghash computes a perceptual hash for a given input image.
 The hash is returned as a 64 bit integer.
 
 The package supports these hashing modes:
