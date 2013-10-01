@@ -1,4 +1,4 @@
 ## gif
 
-gif provides an encoder for the gif image format.
+Provides an encoder for the GIF image format.
 

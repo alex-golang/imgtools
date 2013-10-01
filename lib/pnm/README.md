@@ -1,4 +1,4 @@
-## pnm
+## PNM
 
-pnm provides an encoder for the PNM image format.
+Provides an encoder for the PNM image formats.
 

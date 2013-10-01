@@ -1,4 +1,4 @@
-## png
+## Jpeg
 
-png provides an encoder for the PNG image format.
+Provides an encoder for the Jpeg image format.
 
