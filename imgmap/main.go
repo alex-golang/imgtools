@@ -8,18 +8,13 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	maplib "github.com/jteeuwen/imgtools/imgmap/lib"
 	"github.com/jteeuwen/imgtools/lib"
 	"image"
 	"image/draw"
 	"io"
 	"os"
 	"path/filepath"
-)
-
-var (
-	semicolon = []byte{';'}
-	tab       = []byte{'\t'}
-	space     = []byte{' '}
 )
 
 func main() {
@@ -39,7 +34,12 @@ func main() {
 			os.Exit(1)
 		}
 
-		if parseExpression(linecount, line, src, dst) {
+		ok, err := maplib.Parse(line, src, dst)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Line %d: %v\n", linecount, err)
+		}
+
+		if ok {
 			src, dst = dst, src
 		}
 	}
