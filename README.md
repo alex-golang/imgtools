@@ -16,6 +16,7 @@ and others may benefit from optimization and feature enhancements.
 
 * Implement GIF encoder.
 * Implement `imgquantize` tool.
+* Implement more imghash algorithms.
 
 
 ### Tools
@@ -23,6 +24,7 @@ and others may benefit from optimization and feature enhancements.
 * **imgscale**: Resizes the given image to a new size.
 * **imgconv**: Saves the image as a different image type.
 * **imgmap**: Remaps specified colors in the input image to a set of new colors.
+* **imghash**: Computes a perceptual hash for the input image.
 * **imgquantize**: Provides a set of different image quantization algorithms.
 
 
