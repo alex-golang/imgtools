@@ -16,6 +16,10 @@ result to an output image. On the next rule, the output from the
 previous rule becomes the input for the new rule. So only the
 first rule operates on the original input image.
 
+A map file can contain comments. These are prefixed with `;`
+and span the remainder of the line. Anything in this line is ignored
+by the parser.
+
 
 ### Mappings
 
@@ -79,8 +83,11 @@ saying "Add 10 the current channel value".
 
 ### Named references
 
-Named references are predefined to a limited set of values.
-These are **case sensitive**.
+A named reference is a placehold that can be used for any channel in the
+destination color. It replaces that channel with whatever the named
+reference represents. Named references are **case sensitive**.
+
+This is a list of the names we currently support, along with their meaning:
 
 * **#r**: Current red channel value.
 * **#g**: Current green channel value.
@@ -123,12 +130,6 @@ two lines are functionally equivalent:
 
 	255 153 0 255
 	0xff 0x99 0x00 0xff
-
-
-### Comments
-
-A mapping file can contain comments. These are prefixed with `;`
-and span the remainder of the line.
 
 
 ### Examples
