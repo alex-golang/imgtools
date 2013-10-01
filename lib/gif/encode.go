@@ -10,6 +10,7 @@ import (
 )
 
 func init() {
+	lib.RegisterExtensions(".gif")
 	lib.RegisterEncoder("gif", encode, "quantizer")
 }
 

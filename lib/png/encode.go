@@ -11,6 +11,7 @@ import (
 )
 
 func init() {
+	lib.RegisterExtensions(".png")
 	lib.RegisterEncoder("png", encode)
 }
 

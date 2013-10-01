@@ -11,6 +11,7 @@ import (
 )
 
 func init() {
+	lib.RegisterExtensions(".jpg", ".jpeg")
 	lib.RegisterEncoder("jpeg", encode, "quality")
 }
 

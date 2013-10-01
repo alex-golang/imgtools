@@ -13,6 +13,7 @@ import (
 )
 
 func init() {
+	lib.RegisterExtensions(".pnm", ".pbm", ".pgm", ".ppm")
 	lib.RegisterEncoder("pnm", encode, "format")
 }
 
