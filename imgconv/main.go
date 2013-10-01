@@ -36,7 +36,7 @@ func main() {
 }
 
 // getStreams opens ands returns the input and output streams.
-func getStreams(file string) (in io.ReadCloser, out io.Writer) {
+func getStreams(file string) (in io.Reader, out io.Writer) {
 	if len(file) == 0 {
 		return os.Stdin, os.Stdout
 	}
