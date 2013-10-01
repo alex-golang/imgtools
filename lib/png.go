@@ -11,9 +11,7 @@ import (
 
 func init() {
 	RegisterExtensions(".png")
-	RegisterEncoder("png", encodePng)
-}
-
-func encodePng(w io.Writer, m image.Image, options OptionSet) error {
-	return png.Encode(w, m)
+	RegisterEncoder("png", func(w io.Writer, m image.Image, options OptionSet) error {
+		return png.Encode(w, m)
+	})
 }

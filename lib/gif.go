@@ -10,9 +10,7 @@ import (
 
 func init() {
 	RegisterExtensions(".gif")
-	RegisterEncoder("gif", encodeGif, "quantizer")
-}
-
-func encodeGif(w io.Writer, m image.Image, options OptionSet) error {
-	return nil
+	RegisterEncoder("gif", func(w io.Writer, m image.Image, options OptionSet) error {
+		return nil
+	}, "quantizer")
 }

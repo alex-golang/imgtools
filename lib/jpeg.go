@@ -11,11 +11,9 @@ import (
 
 func init() {
 	RegisterExtensions(".jpg", ".jpeg")
-	RegisterEncoder("jpeg", encodeJpeg, "quality")
-}
-
-func encodeJpeg(w io.Writer, m image.Image, options OptionSet) error {
-	return jpeg.Encode(w, m, &jpeg.Options{
-		Quality: options.Int("quality", jpeg.DefaultQuality),
-	})
+	RegisterEncoder("jpeg", func(w io.Writer, m image.Image, options OptionSet) error {
+		return jpeg.Encode(w, m, &jpeg.Options{
+			Quality: options.Int("quality", jpeg.DefaultQuality),
+		})
+	}, "quality")
 }
