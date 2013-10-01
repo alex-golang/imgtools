@@ -19,12 +19,8 @@ import (
 )
 
 func main() {
-	file, pipe, format, options := parseArgs()
-	in, out := getStreams(file, pipe)
-
-	if !pipe {
-		defer in.Close()
-	}
+	file, format, options := parseArgs()
+	in, out := getStreams(file)
 
 	img, _, err := image.Decode(in)
 	if err != nil {
@@ -40,8 +36,8 @@ func main() {
 }
 
 // getStreams opens ands returns the input and output streams.
-func getStreams(file string, pipe bool) (in io.ReadCloser, out io.Writer) {
-	if pipe {
+func getStreams(file string) (in io.ReadCloser, out io.Writer) {
+	if len(file) == 0 {
 		return os.Stdin, os.Stdout
 	}
 
@@ -55,7 +51,7 @@ func getStreams(file string, pipe bool) (in io.ReadCloser, out io.Writer) {
 }
 
 // parseArgs parses command line arguments.
-func parseArgs() (string, bool, string, string) {
+func parseArgs() (string, string, string) {
 	target := flag.String("type", "", "")
 	optstr := flag.String("options", "", "")
 	version := flag.Bool("version", false, "")
@@ -74,10 +70,10 @@ func parseArgs() (string, bool, string, string) {
 	}
 
 	if flag.NArg() == 0 {
-		return "", true, *target, *optstr
+		return "", *target, *optstr
 	}
 
-	return filepath.Clean(flag.Args()[0]), false, *target, *optstr
+	return filepath.Clean(flag.Args()[0]), *target, *optstr
 }
 
 func usage() {
