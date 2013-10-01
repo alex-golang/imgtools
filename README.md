@@ -15,9 +15,7 @@ and others may benefit from optimization and feature enhancements.
 ### TODO
 
 * Implement GIF encoder.
-* Implement `imgscale` tool.
 * Implement `imgquantize` tool.
-* Enhance `imgmap` tool with more/better filter constructs.
 
 
 ### Tools
