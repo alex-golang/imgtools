@@ -6,12 +6,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	scale "github.com/jteeuwen/imgtools/imgscale/lib"
 	"github.com/jteeuwen/imgtools/lib"
 	_ "github.com/jteeuwen/imgtools/lib/gif"
 	_ "github.com/jteeuwen/imgtools/lib/jpeg"
 	_ "github.com/jteeuwen/imgtools/lib/png"
 	_ "github.com/jteeuwen/imgtools/lib/pnm"
-	"github.com/jteeuwen/resize"
 	"image"
 	"io"
 	"math"
@@ -27,7 +27,7 @@ func main() {
 
 	width := realSize(src.Bounds().Dx(), strwidth)
 	height := realSize(src.Bounds().Dy(), strheight)
-	dst := resize.Resize(width, height, src, filter)
+	dst := scale.Resize(width, height, src, filter)
 
 	save(dst)
 }
@@ -96,7 +96,7 @@ func save(img image.Image) {
 }
 
 // parseArgs parses command line arguments.
-func parseArgs() (string, string, string, resize.InterpolationFunction) {
+func parseArgs() (string, string, string, scale.InterpolationFunction) {
 	width := flag.String("width", "0", "")
 	height := flag.String("height", "0", "")
 	filter := flag.String("filter", "", "")
@@ -116,24 +116,24 @@ func parseArgs() (string, string, string, resize.InterpolationFunction) {
 		os.Exit(1)
 	}
 
-	var interp resize.InterpolationFunction
+	var interp scale.InterpolationFunction
 	switch strings.ToLower(*filter) {
 	case "nearestneighbor":
-		interp = resize.NearestNeighbor
+		interp = scale.NearestNeighbor
 	case "bilinear":
-		interp = resize.Bilinear
+		interp = scale.Bilinear
 	case "bicubic":
-		interp = resize.Bicubic
+		interp = scale.Bicubic
 	case "mitchellnetravali":
-		interp = resize.MitchellNetravali
+		interp = scale.MitchellNetravali
 	case "lanczos2lut":
-		interp = resize.Lanczos2Lut
+		interp = scale.Lanczos2Lut
 	case "lanczos2":
-		interp = resize.Lanczos2
+		interp = scale.Lanczos2
 	case "lanczos3lut":
-		interp = resize.Lanczos3Lut
+		interp = scale.Lanczos3Lut
 	case "lanczos3":
-		interp = resize.Lanczos3
+		interp = scale.Lanczos3
 
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown interpolation algorithm: %s\n", *filter)
