@@ -9,6 +9,13 @@ import (
 	"math"
 )
 
+type pixel struct {
+	r, g, b, a uint8
+	average    uint8
+	lightness  uint8
+	luminosity uint8
+}
+
 // apply the given color mapping to the specified image buffers.
 func apply(from, to *Rule, src, dst draw.Image) {
 	var x, y int
@@ -29,17 +36,19 @@ func apply(from, to *Rule, src, dst draw.Image) {
 // transform transforms the given color using the specified mapping.
 // But only if it matches the filter rule.
 func transform(clr color.Color, from, to *Rule) color.Color {
-	r, g, b, a := clr.RGBA()
-	br, bg, bb, ba := uint8(r>>8), uint8(g>>8), uint8(b>>8), uint8(a>>8)
+	var pix pixel
 
-	if !match(br, bg, bb, ba, from) {
+	r, g, b, a := clr.RGBA()
+	pix.r, pix.g, pix.b, pix.a = uint8(r>>8), uint8(g>>8), uint8(b>>8), uint8(a>>8)
+
+	if !match(&pix, from) {
 		return clr
 	}
 
 	// Compute three different types of grayscale conversion.
 	// These can be applied by named references.
-	average := uint8(((r + g + b) / 3) >> 8)
-	lightness := uint8(((min(min(r, g), b) + max(max(r, g), b)) / 2) >> 8)
+	pix.average = uint8(((r + g + b) / 3) >> 8)
+	pix.lightness = uint8(((min(min(r, g), b) + max(max(r, g), b)) / 2) >> 8)
 
 	// For luminosity it is necessary to apply an inverse of the gamma
 	// function for the color space before calculating the inner product.
@@ -52,19 +61,21 @@ func transform(clr color.Color, from, to *Rule) color.Color {
 	//
 	// This is a rather expensive operation, but gives a much more accurate
 	// and satisfactory result than the average and lightness versions.
-	luminosity := gammaSRGB(0.212655*invGammaSRGB(br) + 0.715158*invGammaSRGB(bg) + 0.072187*invGammaSRGB(bb))
+	pix.luminosity = gammaSRGB(0.212655*invGammaSRGB(pix.r) +
+		0.715158*invGammaSRGB(pix.g) +
+		0.072187*invGammaSRGB(pix.b))
 
 	// Transform pixel.
 	return color.RGBA{
-		_transform(br, bg, bb, ba, br, average, lightness, luminosity, to.R),
-		_transform(br, bg, bb, ba, bg, average, lightness, luminosity, to.G),
-		_transform(br, bg, bb, ba, bb, average, lightness, luminosity, to.B),
-		_transform(br, bg, bb, ba, ba, average, lightness, luminosity, to.A),
+		_transform(&pix, pix.r, to.R),
+		_transform(&pix, pix.g, to.G),
+		_transform(&pix, pix.b, to.B),
+		_transform(&pix, pix.a, to.A),
 	}
 }
 
 // _transform transforms a single channel using the specified mapping.
-func _transform(sr, sg, sb, sa, curr, average, lightness, luminosity uint8, to Channel) uint8 {
+func _transform(pix *pixel, curr uint8, to Channel) uint8 {
 	switch tt := to.(type) {
 	case Number:
 		switch tt.Operator {
@@ -116,19 +127,19 @@ func _transform(sr, sg, sb, sa, curr, average, lightness, luminosity uint8, to C
 	case Name:
 		switch tt {
 		case NameR:
-			return sr
+			return pix.r
 		case NameG:
-			return sg
+			return pix.g
 		case NameB:
-			return sb
+			return pix.b
 		case NameA:
-			return sa
+			return pix.a
 		case NameLightness:
-			return lightness
+			return pix.lightness
 		case NameLuminosity:
-			return luminosity
+			return pix.luminosity
 		case NameAverage:
-			return average
+			return pix.average
 		}
 	}
 
@@ -137,9 +148,11 @@ func _transform(sr, sg, sb, sa, curr, average, lightness, luminosity uint8, to C
 }
 
 // match checks of the given color matches the given filter.
-func match(r, g, b, a uint8, filter *Rule) bool {
-	return matchChannel(r, filter.R) && matchChannel(g, filter.G) &&
-		matchChannel(b, filter.B) && matchChannel(a, filter.A)
+func match(pix *pixel, filter *Rule) bool {
+	return matchChannel(pix.r, filter.R) &&
+		matchChannel(pix.g, filter.G) &&
+		matchChannel(pix.b, filter.B) &&
+		matchChannel(pix.a, filter.A)
 }
 
 func matchChannel(v uint8, c Channel) bool {
