@@ -21,10 +21,12 @@ func RegisterExtensions(ext ...string) {
 // file extension.
 func ValidFile(file string) bool {
 	ext := path.Ext(file)
+
 	for _, v := range extensions {
 		if strings.EqualFold(v, ext) {
 			return true
 		}
 	}
+
 	return false
 }

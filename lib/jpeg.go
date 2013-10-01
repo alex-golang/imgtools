@@ -1,21 +1,20 @@
 // This file is subject to a 1-clause BSD license.
 // Its contents can be found in the enclosed LICENSE file.
 
-package jpeg
+package lib
 
 import (
-	"github.com/jteeuwen/imgtools/lib"
 	"image"
 	"image/jpeg"
 	"io"
 )
 
 func init() {
-	lib.RegisterExtensions(".jpg", ".jpeg")
-	lib.RegisterEncoder("jpeg", encode, "quality")
+	RegisterExtensions(".jpg", ".jpeg")
+	RegisterEncoder("jpeg", encodeJpeg, "quality")
 }
 
-func encode(w io.Writer, m image.Image, options lib.OptionSet) error {
+func encodeJpeg(w io.Writer, m image.Image, options OptionSet) error {
 	return jpeg.Encode(w, m, &jpeg.Options{
 		Quality: options.Int("quality", jpeg.DefaultQuality),
 	})

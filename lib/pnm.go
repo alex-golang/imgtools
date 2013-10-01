@@ -1,11 +1,10 @@
 // This file is subject to a 1-clause BSD license.
 // Its contents can be found in the enclosed LICENSE file.
 
-package pnm
+package lib
 
 import (
 	"fmt"
-	"github.com/jteeuwen/imgtools/lib"
 	"github.com/jteeuwen/pnm"
 	"image"
 	"io"
@@ -13,11 +12,11 @@ import (
 )
 
 func init() {
-	lib.RegisterExtensions(".pnm", ".pbm", ".pgm", ".ppm")
-	lib.RegisterEncoder("pnm", encode, "format")
+	RegisterExtensions(".pnm", ".pbm", ".pgm", ".ppm")
+	RegisterEncoder("pnm", encodePNM, "format")
 }
 
-func encode(w io.Writer, m image.Image, options lib.OptionSet) error {
+func encodePNM(w io.Writer, m image.Image, options OptionSet) error {
 	var ptype pnm.PNMType
 	value := options.String("format", "")
 
