@@ -68,13 +68,13 @@ func getImages(input string) (draw.Image, draw.Image) {
 	}
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Open input file: %v", err)
+		fmt.Fprintf(os.Stderr, "Open input file: %v\n", err)
 		os.Exit(1)
 	}
 
 	img, _, err := lib.Decode(fd)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Decode image: %v", err)
+		fmt.Fprintf(os.Stderr, "Decode image: %v\n", err)
 		os.Exit(1)
 	}
 
