@@ -16,8 +16,8 @@ type pixel struct {
 	luminosity uint8
 }
 
-// apply the given color mapping to the specified image buffers.
-func apply(from, to *Rule, src, dst draw.Image) {
+// Apply the given color mapping to the specified image buffers.
+func Apply(from, to *Rule, src, dst draw.Image) {
 	var x, y int
 	var clr color.Color
 

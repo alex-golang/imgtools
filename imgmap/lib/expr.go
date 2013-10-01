@@ -54,7 +54,7 @@ func Parse(expr []byte, src, dst draw.Image) (bool, error) {
 		return false, err
 	}
 
-	apply(from, to, src, dst)
+	Apply(from, to, src, dst)
 	return true, nil
 }
 
