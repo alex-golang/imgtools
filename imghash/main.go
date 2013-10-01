@@ -6,6 +6,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	hashlib "github.com/jteeuwen/imgtools/imghash/lib"
 	"github.com/jteeuwen/imgtools/lib"
 	_ "github.com/jteeuwen/imgtools/lib/gif"
 	_ "github.com/jteeuwen/imgtools/lib/jpeg"
@@ -52,7 +53,7 @@ func load(input string) image.Image {
 }
 
 // parseArgs parses command line arguments.
-func parseArgs() (string, HashFunc) {
+func parseArgs() (string, hashlib.HashFunc) {
 	hash := flag.String("hash", "average", "")
 	version := flag.Bool("version", false, "")
 
@@ -65,7 +66,7 @@ func parseArgs() (string, HashFunc) {
 	}
 
 	var file string
-	var hf HashFunc
+	var hf hashlib.HashFunc
 
 	if flag.NArg() > 0 {
 		file = filepath.Clean(flag.Args()[0])
@@ -78,7 +79,7 @@ func parseArgs() (string, HashFunc) {
 
 	switch strings.ToLower(*hash) {
 	case "average":
-		hf = Average
+		hf = hashlib.Average
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown hash function: %s\n", *hash)
 		flag.Usage()
