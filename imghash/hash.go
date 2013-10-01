@@ -7,4 +7,3 @@ import "image"
 
 // A HashFunc computes a Perceptual Hash for a given image.
 type HashFunc func(image.Image) uint64
-
