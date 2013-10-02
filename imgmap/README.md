@@ -94,7 +94,7 @@ This is a list of the names we currently support, along with their meaning:
 * **#b**: Current blue channel value.
 * **#a**: Current alpha channel value.
 * **#A**: The average of the RGB channels: `(r + g + b) / 3`
-* **#l**: The RGB lightness: Averages the most prominent amd least
+* **#l**: The RGB lightness: Averages the most prominent and least
   prominent channel values: `(max(r, g, b) + min(r + g + b)) / 2`
 * **#L**: The RGB luminosity is a more sophisticated version of
   the average method. It also averages the values, but it forms a

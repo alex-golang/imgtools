@@ -13,9 +13,9 @@ DISTANCE=$(imghash -diff $HASHA $HASHB)
 EPSILON=3
 
 if [ $DISTANCE -le $EPSILON ]; then
-	echo "$A and $B are equal" # Images are equal.
+	echo "$A and $B are equal"
 else
-	echo "$A and $B are not equal" # Images are not equal.
+	echo "$A and $B are not equal"
 fi
 
 
