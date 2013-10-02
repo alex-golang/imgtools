@@ -19,7 +19,7 @@ func main() {
 	file, hash := parseArgs()
 	src := load(file)
 
-	fmt.Fprintf(os.Stdout, "%d\n", hash(src))
+	fmt.Fprintf(os.Stdout, "%016x\n", hash(src))
 }
 
 // load loads the given image.
