@@ -3,6 +3,13 @@
 imghash computes a perceptual hash for a given input image.
 The hash is returned as a 64 bit integer.
 
+Additionally, it allows one to compare two given hashes.
+This option returns the Hamming Distance between the given hashes,
+which can tell us if the source images are equal or not.
+
+
+### Hashing algorithms
+
 The package supports these hashing modes:
 
 * **Average**: Average computes a Perceptual Hash using a naive, but very fast method.
@@ -20,4 +27,5 @@ The package supports these hashing modes:
   because the colors move along a non-linear scale -- changing where the
   "average" is located and therefore changing which bits are above/below the
   average.
+
 
