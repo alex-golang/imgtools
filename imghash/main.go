@@ -12,14 +12,20 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
 func main() {
-	file, hash := parseArgs()
-	src := load(file)
+	file, hf, a, b := parseArgs()
 
-	fmt.Fprintf(os.Stdout, "%016x\n", hash(src))
+	if a > 0 {
+		distance := hashlib.Distance(a, b)
+		fmt.Fprintf(os.Stdout, "%d\n", distance)
+	} else {
+		src := load(file)
+		fmt.Fprintf(os.Stdout, "%d\n", hf(src))
+	}
 }
 
 // load loads the given image.
@@ -49,7 +55,8 @@ func load(input string) image.Image {
 }
 
 // parseArgs parses command line arguments.
-func parseArgs() (string, hashlib.HashFunc) {
+func parseArgs() (string, hashlib.HashFunc, uint64, uint64) {
+	diff := flag.Bool("diff", false, "")
 	hash := flag.String("hash", "average", "")
 	version := flag.Bool("version", false, "")
 
@@ -59,6 +66,32 @@ func parseArgs() (string, hashlib.HashFunc) {
 	if *version {
 		fmt.Printf("%s\n", Version())
 		os.Exit(0)
+	}
+
+	if *diff {
+		if flag.NArg() < 2 {
+			fmt.Fprintf(os.Stderr, "Missing hash values.\n")
+			flag.Usage()
+			os.Exit(1)
+		}
+
+		str := flag.Args()[0]
+		a, err := strconv.ParseUint(str, 10, 64)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Invalid hash value: %s\n", str)
+			flag.Usage()
+			os.Exit(1)
+		}
+
+		str = flag.Args()[1]
+		b, err := strconv.ParseUint(str, 10, 64)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Invalid hash value: %s\n", str)
+			flag.Usage()
+			os.Exit(1)
+		}
+
+		return "", nil, a, b
 	}
 
 	var file string
@@ -82,12 +115,13 @@ func parseArgs() (string, hashlib.HashFunc) {
 		os.Exit(1)
 	}
 
-	return file, hf
+	return file, hf, 0, 0
 }
 
 func usage() {
 	fmt.Printf(`Usage: %s [options] <path>
    or: cat <path> | %s [options]
+   or: %s -diff <hash1> <hash2>
 
  -version
     Displays version information.
@@ -115,5 +149,21 @@ func usage() {
       scale -- changing where the "average" is located and therefore
       changing which bits are above/below the average.
 
-`, AppName, AppName)
+ -diff
+    This option compares the two given hashes and returns their
+    Hamming Distance.
+    
+    Equality of two images is defined as the Hamming
+    Distance between two hashes. This distance is a value
+    in the range 0-64. Where 0 means the images are
+    indentical and 64 means they are completely different.
+    To account for minor scaling or aspect ratio artefacts,
+    it is generally better to compare this distance to a
+    threshold value in order to determine of the images
+    are equal or not. For instance, a thumbnail and its
+    full-size image version may have a distance of 3 or less.
+    The input images are then to be considered equal if
+    distance <= 3.
+
+`, AppName, AppName, AppName)
 }
