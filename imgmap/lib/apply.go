@@ -19,63 +19,64 @@ type pixel struct {
 // Apply the given color mapping to the specified image buffers.
 func Apply(from, to *Rule, src, dst draw.Image) {
 	var x, y int
-	var clr color.Color
+	var r, g, b, a uint32
+	var sc color.Color
+	var dc color.RGBA
+	var pix pixel
 
 	rect := src.Bounds()
 
 	for y = 0; y < rect.Dy(); y++ {
 		for x = 0; x < rect.Dx(); x++ {
-			clr = src.At(x, y)
-			clr = transform(clr, from, to)
+			sc = src.At(x, y)
 
-			dst.Set(x, y, clr)
+			r, g, b, a = sc.RGBA()
+			pix.r = uint8(r >> 8)
+			pix.g = uint8(g >> 8)
+			pix.b = uint8(b >> 8)
+			pix.a = uint8(a >> 8)
+
+			// Check if the pixel matches the filter rule.
+			if !(match(pix.r, from.R) && match(pix.g, from.G) && match(pix.b, from.B) && match(pix.a, from.A)) {
+				dst.Set(x, y, sc)
+				continue
+			}
+
+			// Compute three different types of grayscale conversion.
+			// These can be applied by named references.
+			pix.average = uint8(((r + g + b) / 3) >> 8)
+			pix.lightness = uint8(((min(min(r, g), b) + max(max(r, g), b)) / 2) >> 8)
+
+			// For luminosity it is necessary to apply an inverse of the gamma
+			// function for the color space before calculating the inner product.
+			// Then you apply the gamma function to the reduced value. Failure to
+			// incorporate the gamma function can result in errors of up to 20%.
+			//
+			// For typical computer stuff, the color space is sRGB. The right
+			// numbers for sRGB are approx. 0.21, 0.72, 0.07. Gamma for sRGB
+			// is a composite function that approximates exponentiation by 1/2.2
+			//
+			// This is a rather expensive operation, but gives a much more accurate
+			// and satisfactory result than the average and lightness versions.
+			pix.luminosity = gammaSRGB(
+				0.212655*invGammaSRGB(pix.r) +
+					0.715158*invGammaSRGB(pix.g) +
+					0.072187*invGammaSRGB(pix.b))
+
+			// Transform color.
+			dc.R = transform(&pix, pix.r, to.R)
+			dc.G = transform(&pix, pix.g, to.G)
+			dc.B = transform(&pix, pix.b, to.B)
+			dc.A = transform(&pix, pix.a, to.A)
+
+			// Set new pixel.
+			dst.Set(x, y, dc)
 		}
 	}
 }
 
-// transform transforms the given color using the specified mapping.
-// But only if it matches the filter rule.
-func transform(clr color.Color, from, to *Rule) color.Color {
-	var pix pixel
-
-	r, g, b, a := clr.RGBA()
-	pix.r, pix.g, pix.b, pix.a = uint8(r>>8), uint8(g>>8), uint8(b>>8), uint8(a>>8)
-
-	if !match(&pix, from) {
-		return clr
-	}
-
-	// Compute three different types of grayscale conversion.
-	// These can be applied by named references.
-	pix.average = uint8(((r + g + b) / 3) >> 8)
-	pix.lightness = uint8(((min(min(r, g), b) + max(max(r, g), b)) / 2) >> 8)
-
-	// For luminosity it is necessary to apply an inverse of the gamma
-	// function for the color space before calculating the inner product.
-	// Then you apply the gamma function to the reduced value. Failure to
-	// incorporate the gamma function can result in errors of up to 20%.
-	//
-	// For typical computer stuff, the color space is sRGB. The right
-	// numbers for sRGB are approx. 0.21, 0.72, 0.07. Gamma for sRGB
-	// is a composite function that approximates exponentiation by 1/2.2
-	//
-	// This is a rather expensive operation, but gives a much more accurate
-	// and satisfactory result than the average and lightness versions.
-	pix.luminosity = gammaSRGB(0.212655*invGammaSRGB(pix.r) +
-		0.715158*invGammaSRGB(pix.g) +
-		0.072187*invGammaSRGB(pix.b))
-
-	// Transform pixel.
-	return color.RGBA{
-		_transform(&pix, pix.r, to.R),
-		_transform(&pix, pix.g, to.G),
-		_transform(&pix, pix.b, to.B),
-		_transform(&pix, pix.a, to.A),
-	}
-}
-
-// _transform transforms a single channel using the specified mapping.
-func _transform(pix *pixel, curr uint8, to Channel) uint8 {
+// transform transforms a single channel using the specified mapping.
+func transform(pix *pixel, curr uint8, to Channel) uint8 {
 	switch tt := to.(type) {
 	case Number:
 		switch tt.Operator {
@@ -147,15 +148,8 @@ func _transform(pix *pixel, curr uint8, to Channel) uint8 {
 	return curr
 }
 
-// match checks of the given color matches the given filter.
-func match(pix *pixel, filter *Rule) bool {
-	return matchChannel(pix.r, filter.R) &&
-		matchChannel(pix.g, filter.G) &&
-		matchChannel(pix.b, filter.B) &&
-		matchChannel(pix.a, filter.A)
-}
-
-func matchChannel(v uint8, c Channel) bool {
+// match checks if the given channel value mathes the given channel rule.
+func match(v uint8, c Channel) bool {
 	num, ok := c.(Number)
 	if !ok {
 		return true // wildcard
@@ -172,7 +166,7 @@ func matchChannel(v uint8, c Channel) bool {
 		return v >= num.Value
 	}
 
-	return true
+	return v == num.Value
 }
 
 // sRGB "gamma" function (approx 2.2)
